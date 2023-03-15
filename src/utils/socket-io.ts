@@ -1,6 +1,7 @@
-import socketio from "socket.io";
+import socketIo from "socket.io";
 import { Server } from "socket.io";
 import http from "http";
+import PlayerService from "../services/players";
 
 let io: Server;
 
@@ -17,14 +18,12 @@ module.exports = {
         // },
       };
 
-    interface Ball {
-      ballId: string;
+    interface PlayerData {
+      playerId: string;
       color: string;
       top: number;
       left: number;
     }
-
-    let balls: Ball[] = [];
 
     const colors: string[] = [
       "#ff0000",
@@ -35,64 +34,67 @@ module.exports = {
       "#00ffff",
     ];
 
-    const addBall = (
-      ballId: string,
+    const getPlayers = async (): Promise<PlayerData[]> => {
+      const response = await PlayerService.index();
+      return response.data;
+    };
+
+    const addPlayer = async (
+      playerId: string,
       color: string,
       top: number,
       left: number
-    ): void => {
-      balls.push({ ballId, color, top, left });
+    ): Promise<void> => {
+      const response = await PlayerService.store({playerId, color, top, left})
+      console.log("Socket-Add-Response: ", response)
     };
 
-    const removeBall = (ballId: string): void => {
-      balls = balls.filter((ball: Ball) => ball.ballId !== ballId);
+    const removePlayer = async (playerId: string): Promise<void> => {
+      const response = await PlayerService.destroy(playerId);
+      console.log("Socket-Remove-Response: ", response)
     };
 
-    io.on("connection", (socket: socketio.Socket) => {
+    const updatePlayer = async (player: PlayerData) : Promise<void> => {
+      const response = await PlayerService.update(player);
+      console.log("Socket-Update-Response: ", response)
+    }
+
+    io.on("connection", async (socket: socketIo.Socket) => {
       //when connect
-      console.log("A new ball is coming");
+      console.log("A new player is coming");
 
-      //take ballId and socketId from ball
+      //take socketId from the new player
       const color: string = colors[Math.floor(Math.random() * colors.length)];
 
-      const top: number = 50;
-      const left: number = 50;
+      const top = 50;
+      const left = 50;
+      const playerId: string = socket.id;
+      
+      await addPlayer(playerId, color, top, left);
 
-      const ballId: string = socket.id;
-      addBall(ballId, color, top, left);
-      console.log(balls);
-
-      io.emit("addBall", balls);
+      getPlayers().then(players => {
+        console.log("------------------Players-socket:-------------", players);
+        io.emit("addPlayer", players);
+      }).catch(error => {
+        console.error(error);
+      });
 
       //when disconnect
-      socket.on("disconnect", () => {
-        console.log("A ball left!");
+      socket.on("disconnect", async () => {
+        console.log("A player left!");
 
-        removeBall(socket.id);
-        console.log(balls);
-        io.emit("removeBall", socket.id);
+        await removePlayer(socket.id);
+        io.emit("removePlayer", socket.id);
       });
 
       //when move
-      socket.on("move", (data: { ballId: string; x: number; y: number }) => {
-        console.log("received move event:", data);
+      socket.on("move", async (data: { playerId: string, color: string, top: number, left: number }) => {
+        
+        console.log("Received move event:", data);
 
-        // find the current player's ball and update its position
-        for (let i = 0; i < balls.length; i++) {
-          if (balls[i].ballId === data.ballId) {
-            console.log(
-              `>>>ball-pos-before= left: ${balls[i].left}, top:${balls[i].top}`
-            );
-            balls[i].left = data.x;
-            balls[i].top = data.y;
-            console.log(
-              `>>>ball-pos-after= left: ${balls[i].left}, top:${balls[i].top}`
-            );
-            break;
-          }
-        }
+        await updatePlayer(data);
 
-        // emit the updated ball list to all clients
+        // emit the updated player list to all clients
         io.emit("updatePosition", data);
       });
     });

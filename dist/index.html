@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Players</title>
+    <style>
+        .player {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+    </style>
+
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+
+    <script>
+        const socket = io();
+
+        // flag to check if the game has been initialized
+        let myID;
+
+        socket.on('addPlayer', (players) => {
+
+            console.log("*************************************");
+            console.log("Received-Players-Front: ", players);
+            console.log("*************************************");
+
+            const lastAddedPlayer = players[players.length - 1];
+
+            const handleKeyUp = (event) => {
+                // handle keyup event
+                const currentPlayer = document.getElementById(myID);
+                console.log("newPlayer Listener", myID)
+
+                switch (event.key) {
+                    case 'ArrowUp':
+                        currentPlayer.style.top = (currentPlayer.offsetTop - 10) + 'px';
+                        break;
+
+                    case 'ArrowDown':
+                        currentPlayer.style.top = (currentPlayer.offsetTop + 10) + 'px';
+                        break;
+
+                    case 'ArrowLeft':
+                        currentPlayer.style.left = (currentPlayer.offsetLeft - 10) + 'px';
+                        break;
+
+                    case 'ArrowRight':
+                        currentPlayer.style.left = (currentPlayer.offsetLeft + 10) + 'px';
+                        break;
+                    default:
+                        return;
+                }
+
+                // emit a 'move' event to the server
+                socket.emit('move', { 
+                    playerId: myID,
+                    color: window.getComputedStyle(currentPlayer).getPropertyValue('color'),
+                    top: currentPlayer.offsetTop,
+                    left: currentPlayer.offsetLeft });
+            };
+
+            if (!myID) {
+
+                players.forEach((player) => {
+                    // create a new player element and append it to the body
+                    const newPlayer = document.createElement('div');
+
+                    newPlayer.classList.add('player');
+                    newPlayer.id = player.playerId;
+                    console.log("id, ", newPlayer.id)
+                    newPlayer.style.top = player.top + 'px';
+                    newPlayer.style.left = player.left + 'px';
+                    newPlayer.style.backgroundColor = player.color;
+                    document.body.appendChild(newPlayer);
+                });
+
+                window.addEventListener('keyup', handleKeyUp);
+                myID = lastAddedPlayer.playerId;
+            }
+            else {
+                console.log("lastAddedPlayer:", lastAddedPlayer)
+
+                // create a new player element and append it to the body
+                const newPlayer = document.createElement('div');
+
+                newPlayer.classList.add('player');
+                newPlayer.id = lastAddedPlayer.playerId;
+                console.log("id, ", lastAddedPlayer.id)
+                newPlayer.style.top = lastAddedPlayer.top + 'px';
+                newPlayer.style.left = lastAddedPlayer.left + 'px';
+                newPlayer.style.backgroundColor = lastAddedPlayer.color;
+                document.body.appendChild(newPlayer);
+            }
+        });
+
+        socket.on('removePlayer', (playerId) => {
+            const player = document.getElementById(playerId);
+            document.body.removeChild(player);
+        });
+
+        socket.on('updatePosition', (data) => {
+
+            console.log("data_to_update:", data);
+            const playerId = data.playerId;
+            // console.log("pos", playerId);
+
+            const updatedPlayer = document.getElementById(playerId);
+            console.log(updatedPlayer)
+            updatedPlayer.style.left = data.left + 'px';
+            updatedPlayer.style.top = data.top + 'px';
+
+            console.log(`>>>After update= left: ${updatedPlayer.style.left}, top:${updatedPlayer.style.top}`);
+        });
+
+    </script>
+</head>
+
+<body>
+</body>
+
+</html>
