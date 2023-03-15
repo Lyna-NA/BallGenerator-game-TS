@@ -3,6 +3,8 @@ import express, { Request, Response, NextFunction } from "express";
 import HttpError from "./models/HttpError";
 import SequelizeManager from "./utils/sequelize-manager";
 import http from "http";
+import Socket from "./utils/socket-io";
+import path from "path";
 
 //modules: routes
 import playerRoutes from "./routes/player-routes";
@@ -17,9 +19,13 @@ const app: express.Application = express();
 //Content-Type: application/x-www-form-url-encoded
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from the public directory
+app.use("/public", express.static(path.join(__dirname, "public")));
+
+
 //app.use: routes
-app.get("/", (req: express.Request, res: express.Response) => {
-  res.sendFile(__dirname + '/index.html');
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 app.use("/api/players", playerRoutes);
@@ -42,12 +48,12 @@ manager.syncModels(async (message: string, status: boolean) => {
   console.log(">>>>>>>>>>>>", message);
 
   if (status) {
-    const server:http.Server = app.listen(5000);
+    const server:http.Server = app.listen(3000);
 
     console.log("==============================================");
     console.log('Server running on port 5000');
     console.log("==============================================");
     
-    const io = require("./utils/socket-io").init(server);
+    Socket.init(server);
   }
 });

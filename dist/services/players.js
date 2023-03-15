@@ -20,17 +20,13 @@ const PlayerController = {
             return { status: true, data: response };
         }
         catch (error) {
-            return { status: false, data: null };
+            return { status: false, data: [] };
         }
     }),
     show: (playerId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const response = yield Player_1.default.findByPk(playerId);
-            console.log("Show-From-PlayerService-----", response);
-            if (response == null) {
-                return { status: false, data: null };
-            }
-            return { status: true, data: response };
+            return { status: (response !== null), data: response };
         }
         catch (error) {
             return { status: false, data: null };
@@ -38,14 +34,11 @@ const PlayerController = {
     }),
     store: (playerData) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let response = yield Player_1.default.create(playerData);
-            return { status: true, data: response.dataValues };
+            const response = yield Player_1.default.create(playerData);
+            return { status: true, data: response };
         }
         catch (error) {
-            return {
-                status: true,
-                data: null,
-            };
+            return { status: false, data: null };
         }
     }),
     update: (playerData) => __awaiter(void 0, void 0, void 0, function* () {
@@ -59,7 +52,8 @@ const PlayerController = {
                 top: playerData.top,
                 left: playerData.left,
             }, { where: { playerId: playerData.playerId } });
-            return { status: true, data: response };
+            const isUpdated = response[0] == 1;
+            return { status: isUpdated, data: response[0] };
         }
         catch (error) {
             return { status: false, data: null };
@@ -67,6 +61,10 @@ const PlayerController = {
     }),
     destroy: (playerId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            const player = yield Player_1.default.findByPk(playerId);
+            if (player == null) {
+                return { status: false, data: null };
+            }
             const result = yield Player_1.default.destroy({ where: { playerId: playerId } });
             const isDeleted = result === 1;
             return {

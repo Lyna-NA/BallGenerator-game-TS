@@ -5,7 +5,7 @@ import PlayerService from "../services/players";
 
 let io: Server;
 
-module.exports = {
+const Socket = {
   init: (httpServer: http.Server) => {
     // create a new socket.io instance and pass the http server to it
     (io = new Server(httpServer)),
@@ -25,14 +25,14 @@ module.exports = {
       left: number;
     }
 
-    const colors: string[] = [
-      "#ff0000",
-      "#00ff00",
-      "#0000ff",
-      "#ffff00",
-      "#ff00ff",
-      "#00ffff",
-    ];
+    // const colors: string[] = [
+    //   "#ff0000",
+    //   "#00ff00",
+    //   "#0000ff",
+    //   "#ffff00",
+    //   "#ff00ff",
+    //   "#00ffff",
+    // ];
 
     const getPlayers = async (): Promise<PlayerData[]> => {
       const response = await PlayerService.index();
@@ -64,13 +64,14 @@ module.exports = {
       console.log("A new player is coming");
 
       //take socketId from the new player
-      const color: string = colors[Math.floor(Math.random() * colors.length)];
+      // const color: string = colors[Math.floor(Math.random() * colors.length)];
 
-      const top = 50;
-      const left = 50;
+      const defaultColor = "#000000";
+      const defaultTop = 50;
+      const defaultLeft = 50;
       const playerId: string = socket.id;
       
-      await addPlayer(playerId, color, top, left);
+      await addPlayer(playerId, defaultColor, defaultTop, defaultLeft);
 
       getPlayers().then(players => {
         console.log("------------------Players-socket:-------------", players);
@@ -110,3 +111,5 @@ module.exports = {
     return io;
   },
 };
+
+export default Socket;

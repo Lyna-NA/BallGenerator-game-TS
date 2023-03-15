@@ -16,6 +16,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const HttpError_1 = __importDefault(require("./models/HttpError"));
 const sequelize_manager_1 = __importDefault(require("./utils/sequelize-manager"));
+const socket_io_1 = __importDefault(require("./utils/socket-io"));
+const path_1 = __importDefault(require("path"));
 //modules: routes
 const player_routes_1 = __importDefault(require("./routes/player-routes"));
 //sequelizeManager
@@ -25,9 +27,11 @@ const app = (0, express_1.default)();
 //app.use: urlEncoded
 //Content-Type: application/x-www-form-url-encoded
 app.use(express_1.default.urlencoded({ extended: true }));
+// Serve static files from the public directory
+app.use("/public", express_1.default.static(path_1.default.join(__dirname, "public")));
 //app.use: routes
 app.get("/", (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 app.use("/api/players", player_routes_1.default);
 //app.player: Fallback route
@@ -43,10 +47,10 @@ manager.authenticate();
 manager.syncModels((message, status) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(">>>>>>>>>>>>", message);
     if (status) {
-        const server = app.listen(5000);
+        const server = app.listen(3000);
         console.log("==============================================");
         console.log('Server running on port 5000');
         console.log("==============================================");
-        const io = require("./utils/socket-io").init(server);
+        socket_io_1.default.init(server);
     }
 }));

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const socket_io_1 = require("socket.io");
 const players_1 = __importDefault(require("../services/players"));
 let io;
-module.exports = {
+const Socket = {
     init: (httpServer) => {
         // create a new socket.io instance and pass the http server to it
         (io = new socket_io_1.Server(httpServer)),
@@ -27,14 +27,14 @@ module.exports = {
             //   // credentials: true,
             // },
             };
-        const colors = [
-            "#ff0000",
-            "#00ff00",
-            "#0000ff",
-            "#ffff00",
-            "#ff00ff",
-            "#00ffff",
-        ];
+        // const colors: string[] = [
+        //   "#ff0000",
+        //   "#00ff00",
+        //   "#0000ff",
+        //   "#ffff00",
+        //   "#ff00ff",
+        //   "#00ffff",
+        // ];
         const getPlayers = () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield players_1.default.index();
             return response.data;
@@ -55,11 +55,12 @@ module.exports = {
             //when connect
             console.log("A new player is coming");
             //take socketId from the new player
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const top = 50;
-            const left = 50;
+            // const color: string = colors[Math.floor(Math.random() * colors.length)];
+            const defaultColor = "#000000";
+            const defaultTop = 50;
+            const defaultLeft = 50;
             const playerId = socket.id;
-            yield addPlayer(playerId, color, top, left);
+            yield addPlayer(playerId, defaultColor, defaultTop, defaultLeft);
             getPlayers().then(players => {
                 console.log("------------------Players-socket:-------------", players);
                 io.emit("addPlayer", players);
@@ -91,3 +92,4 @@ module.exports = {
         return io;
     },
 };
+exports.default = Socket;

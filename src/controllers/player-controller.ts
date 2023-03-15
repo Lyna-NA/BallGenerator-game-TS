@@ -44,16 +44,14 @@ const PlayerController = {
   },
 
   store: async (req: Request, res: Response): Promise<void> => {
-    console.log("---------Store-Controller-----------")
-
-    const Player: PlayerData = {
+    const player: PlayerData = {
       playerId: req.body.playerId,
       color: req.body.color,
       top: req.body.top,
       left: req.body.left,
     };
 
-    const response = await PlayerService.store(Player);
+    const response = await PlayerService.store(player);
 
     if (response.status) {
       res

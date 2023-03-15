@@ -45,14 +45,13 @@ const PlayerController = {
         }
     }),
     store: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("---------Store-Controller-----------");
-        const Player = {
+        const player = {
             playerId: req.body.playerId,
             color: req.body.color,
             top: req.body.top,
             left: req.body.left,
         };
-        const response = yield players_1.default.store(Player);
+        const response = yield players_1.default.store(player);
         if (response.status) {
             res
                 .status(201)

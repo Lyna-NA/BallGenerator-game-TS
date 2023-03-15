@@ -8,24 +8,20 @@ interface PlayerData {
 }
 
 const PlayerController = {
-  index: async (): Promise<{ status: boolean; data: any }> => {
+  index: async (): Promise<{ status: boolean; data: PlayerData[] }> => {
     try {
       const response = await Player.findAll();
       return { status: true, data: response };
     } catch (error) {
-      return { status: false, data: null };
+      return { status: false, data: [] };
     }
   },
 
-  show: async (playerId: string): Promise<{ status: boolean; data: any }> => {
+  show: async (playerId: string): Promise<{ status: boolean; data: PlayerData|null }> => {
     try {
       const response = await Player.findByPk(playerId);
-      console.log("Show-From-PlayerService-----", response);
 
-      if (response == null) {
-        return { status: false, data: null };
-      }
-      return { status: true, data: response };
+      return { status: (response !== null), data: response };
     } catch (error) {
       return { status: false, data: null };
     }
@@ -33,21 +29,18 @@ const PlayerController = {
 
   store: async (
     playerData: PlayerData
-  ): Promise<{ status: boolean; data: any }> => {
+  ): Promise<{ status: boolean; data: PlayerData|null }> => {
     try {
-      let response = await Player.create(playerData);
-      return { status: true, data: response.dataValues };
+      const response = await Player.create(playerData);
+      return { status: true, data: response };
     } catch (error) {
-      return {
-        status: true,
-        data: null,
-      };
+      return { status: false, data: null};
     }
   },
 
   update: async (
     playerData: PlayerData
-  ): Promise<{ status: boolean; data: any }> => {
+  ): Promise<{ status: boolean; data: number|null }> => {
     try {
       const player = await Player.findByPk(playerData.playerId);
 
@@ -63,7 +56,11 @@ const PlayerController = {
         },
         { where: { playerId: playerData.playerId } }
       );
-      return { status: true, data: response };
+
+      const isUpdated: boolean = response[0] == 1;
+      
+      return { status: isUpdated, data: response[0] };
+
     } catch (error) {
       return { status: false, data: null };
     }
@@ -71,8 +68,14 @@ const PlayerController = {
 
   destroy: async (
     playerId: string
-  ): Promise<{ status: boolean; data: any }> => {
+  ): Promise<{ status: boolean; data: number|null }> => {
     try {
+      const player = await Player.findByPk(playerId);
+
+      if (player == null) {
+        return { status: false, data: null };
+      }
+
       const result = await Player.destroy({ where: { playerId: playerId } });
       const isDeleted = result === 1;
       return {
