@@ -11,6 +11,10 @@ module.exports = {
     sourceType: 'module',
   },
   globals: {
-    module: 'readonly'
+    module: 'readonly',
+    "document": true,
+    "window": true,
+    "console": true,
+    "io": true
   }
 };

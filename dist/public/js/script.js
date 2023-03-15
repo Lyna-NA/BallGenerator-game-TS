@@ -49,7 +49,8 @@ socket.on("addPlayer", (players) => {
       // create a new player element and append it to the body
       const newPlayer = document.createElement("div");
 
-      newPlayer.classList.add("player");
+      newPlayer.classList.add("ball");
+      newPlayer.classList.add("blackBall");
       newPlayer.id = player.playerId;
       console.log("id, ", newPlayer.id);
       newPlayer.style.top = player.top + "px";
@@ -65,13 +66,17 @@ socket.on("addPlayer", (players) => {
 
     //change the color to highlight the current player
     document.getElementById(myID).style.backgroundColor = "#ffffff";
+    document.getElementById(myID).classList.remove("blackBall");
+    document.getElementById(myID).classList.add("whiteBall");
+
   } else {
     console.log("lastAddedPlayer:", lastAddedPlayer);
 
     // create a new player element and append it to the body
     const newPlayer = document.createElement("div");
 
-    newPlayer.classList.add("player");
+    newPlayer.classList.add("ball");
+    newPlayer.classList.add("blackBall");
     newPlayer.id = lastAddedPlayer.playerId;
     console.log("id, ", lastAddedPlayer.id);
     newPlayer.style.top = lastAddedPlayer.top + "px";
