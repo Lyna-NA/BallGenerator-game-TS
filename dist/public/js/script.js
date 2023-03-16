@@ -3,9 +3,20 @@ const socket = io();
 // flag to check if the game has been initialized
 let myID;
 
+const getCurrentPlayer = () => {
+  return document.getElementById(myID);
+};
+
+const checkWinner = () => {
+  const currentPlayer = getCurrentPlayer();
+  if (currentPlayer.offsetLeft >= 1230) {
+    socket.emit("haveWinner");
+  }
+};
+
 const handleKeyUp = (event) => {
   // handle keyup event
-  const currentPlayer = document.getElementById(myID);
+  const currentPlayer = getCurrentPlayer();
   console.log("newPlayer Listener", myID);
 
   switch (event.key) {
@@ -35,6 +46,9 @@ const handleKeyUp = (event) => {
     top: currentPlayer.offsetTop,
     left: currentPlayer.offsetLeft,
   });
+
+  // check Winner
+  checkWinner();
 };
 
 socket.on("addPlayer", (players) => {
@@ -65,10 +79,11 @@ socket.on("addPlayer", (players) => {
     myID = lastAddedPlayer.playerId;
 
     //change the color to highlight the current player
-    document.getElementById(myID).style.backgroundColor = "#ffffff";
-    document.getElementById(myID).classList.remove("blackBall");
-    document.getElementById(myID).classList.add("whiteBall");
+    const currentPlayer = getCurrentPlayer();
 
+    currentPlayer.style.backgroundColor = "#ffffff";
+    currentPlayer.classList.remove("blackBall");
+    currentPlayer.classList.add("whiteBall");
   } else {
     console.log("lastAddedPlayer:", lastAddedPlayer);
 
@@ -104,3 +119,14 @@ socket.on("updatePosition", (data) => {
     `>>>After update= left: ${updatedPlayer.style.left}, top:${updatedPlayer.style.top}`
   );
 });
+
+socket.on("gameOver", () => {
+  console.log("**Game Over**");
+  Swal.fire({
+    icon: "success",
+    title: "Game Over!",
+    text: "We Have a Winner",
+    customClass: "confetti",
+  });
+});
+ 

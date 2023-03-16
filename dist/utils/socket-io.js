@@ -35,6 +35,9 @@ const Socket = {
         //   "#ff00ff",
         //   "#00ffff",
         // ];
+        const defaultColor = "#000000";
+        let defaultTop = 80;
+        const defaultLeft = 50;
         const getPlayers = () => __awaiter(void 0, void 0, void 0, function* () {
             const response = yield players_1.default.index();
             return response.data;
@@ -54,13 +57,11 @@ const Socket = {
         io.on("connection", (socket) => __awaiter(void 0, void 0, void 0, function* () {
             //when connect
             console.log("A new player is coming");
-            //take socketId from the new player
             // const color: string = colors[Math.floor(Math.random() * colors.length)];
-            const defaultColor = "#000000";
-            const defaultTop = 50;
-            const defaultLeft = 50;
+            //take socketId from the new player
             const playerId = socket.id;
             yield addPlayer(playerId, defaultColor, defaultTop, defaultLeft);
+            defaultTop += 70;
             getPlayers().then(players => {
                 console.log("------------------Players-socket:-------------", players);
                 io.emit("addPlayer", players);
@@ -72,6 +73,7 @@ const Socket = {
                 console.log("A player left!");
                 yield removePlayer(socket.id);
                 io.emit("removePlayer", socket.id);
+                defaultTop -= 70;
             }));
             //when move
             socket.on("move", (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -80,6 +82,11 @@ const Socket = {
                 // emit the updated player list to all clients
                 io.emit("updatePosition", data);
             }));
+            //when having a winner
+            socket.on("haveWinner", () => {
+                // alert all players "Game Over"
+                io.emit("gameOver");
+            });
         }));
         return io;
     },

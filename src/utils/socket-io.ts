@@ -34,6 +34,10 @@ const Socket = {
     //   "#00ffff",
     // ];
 
+    const defaultColor = "#000000";
+    let defaultTop = 80;
+    const defaultLeft = 50;
+
     const getPlayers = async (): Promise<PlayerData[]> => {
       const response = await PlayerService.index();
       return response.data;
@@ -63,15 +67,14 @@ const Socket = {
       //when connect
       console.log("A new player is coming");
 
-      //take socketId from the new player
       // const color: string = colors[Math.floor(Math.random() * colors.length)];
 
-      const defaultColor = "#000000";
-      const defaultTop = 50;
-      const defaultLeft = 50;
+      //take socketId from the new player
       const playerId: string = socket.id;
       
       await addPlayer(playerId, defaultColor, defaultTop, defaultLeft);
+
+      defaultTop += 70;
 
       getPlayers().then(players => {
         console.log("------------------Players-socket:-------------", players);
@@ -86,6 +89,8 @@ const Socket = {
 
         await removePlayer(socket.id);
         io.emit("removePlayer", socket.id);
+
+        defaultTop -= 70;
       });
 
       //when move
@@ -97,6 +102,13 @@ const Socket = {
 
         // emit the updated player list to all clients
         io.emit("updatePosition", data);
+      });
+
+      //when having a winner
+      socket.on("haveWinner", () => {
+    
+        // alert all players "Game Over"
+        io.emit("gameOver");
       });
     });
 

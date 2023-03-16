@@ -15,6 +15,7 @@ module.exports = {
     "document": true,
     "window": true,
     "console": true,
-    "io": true
+    "io": true,
+    "Swal": true,
   }
 };
