@@ -5,14 +5,28 @@
     <title>Players</title>
     <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script  src="./public/js/script.js"></script>
+    <script src="./public/js/script.js"></script>
     <link rel="stylesheet" href="./public/css/style.css">
 </head>
 
 <body>
     <!-- Your race content goes here -->
+
+    <div id="arrow-container">
+        <div class="arrowRow">
+            <div class="arrow left" onmousedown="fireKeyDown('ArrowLeft')" onmouseup="fireKeyUp('ArrowLeft')">&#8592;</div>
+            <div class="arrowCol">
+                <div class="arrow up" onmousedown="fireKeyDown('ArrowUp')" onmouseup="fireKeyUp('ArrowUp')">&#8593;</div>
+                <div class="arrow down" onmousedown="fireKeyDown('ArrowDown')" onmouseup="fireKeyUp('ArrowDown')">&#8595;
+                </div>
+            </div>
+            <div class="arrow right" onmousedown="fireKeyDown('ArrowRight')" onmouseup="fireKeyUp('ArrowRight')">&#8594;
+            </div>
+        </div>
+    </div>
+
     <div class="end-bar">
-        <p>End of race!</p>
+        <p>End of race</p>
     </div>
 </body>
 

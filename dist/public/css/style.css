@@ -2,6 +2,7 @@ body {
     background-image: url("../img/wood.jpg");
     background-repeat: repeat;
     background-size: cover;
+    margin: 0;
 }
 
 .ball {
@@ -63,4 +64,72 @@ body {
     100% {
         transform: translateY(30px) rotate(360deg);
     }
+}
+
+#arrow-container {
+    position: absolute;
+    top: 82.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(255, 255, 255, 0.5);
+    padding: 10px;
+}
+
+.arrow {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 24px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.arrow:active {
+    font-size: 35px;
+    background-color: #dbd0d0;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5), 0px 0px 5px rgba(255, 255, 255, 0.5);
+  }
+
+.arrow-down-pressed .down {
+    color: blue;
+    font-size: 35px;
+    background-color: #dbd0d0;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5), 0px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.arrow-up-pressed .up {
+    color: red;
+    font-size: 35px;
+    background-color: #dbd0d0;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5), 0px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.arrow-left-pressed .left {
+    color: green;
+    font-size: 35px;
+    background-color: #dbd0d0;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5), 0px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.arrow-right-pressed .right {
+    color: orange;
+    font-size: 35px;
+    background-color: #dbd0d0;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5), 0px 0px 5px rgba(255, 255, 255, 0.5);
+}
+
+.arrowRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.arrowCol{
+    display: flex;
+    flex-direction: column;
 }

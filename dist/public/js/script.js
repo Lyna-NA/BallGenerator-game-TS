@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const socket = io();
 
 // flag to check if the game has been initialized
@@ -14,7 +15,26 @@ const checkWinner = () => {
   }
 };
 
+const handleKeyDown = (event) => {
+  const arrowContainer = document.getElementById("arrow-container");
+
+  if (event.key === "ArrowDown") {
+    arrowContainer.classList.add("arrow-down-pressed");
+  } else if (event.key === "ArrowUp") {
+    arrowContainer.classList.add("arrow-up-pressed");
+  } else if (event.key === "ArrowLeft") {
+    arrowContainer.classList.add("arrow-left-pressed");
+  } else if (event.key === "ArrowRight") {
+    arrowContainer.classList.add("arrow-right-pressed");
+  }
+}
+
 const handleKeyUp = (event) => {
+
+  console.log("Here=================keyUp=================================")
+
+  const arrowContainer = document.getElementById("arrow-container");
+
   // handle keyup event
   const currentPlayer = getCurrentPlayer();
   console.log("newPlayer Listener", myID);
@@ -22,18 +42,22 @@ const handleKeyUp = (event) => {
   switch (event.key) {
     case "ArrowUp":
       currentPlayer.style.top = currentPlayer.offsetTop - 10 + "px";
+      arrowContainer.classList.remove("arrow-up-pressed");
       break;
 
     case "ArrowDown":
       currentPlayer.style.top = currentPlayer.offsetTop + 10 + "px";
+      arrowContainer.classList.remove("arrow-down-pressed");
       break;
 
     case "ArrowLeft":
       currentPlayer.style.left = currentPlayer.offsetLeft - 10 + "px";
+      arrowContainer.classList.remove("arrow-left-pressed");
       break;
 
     case "ArrowRight":
       currentPlayer.style.left = currentPlayer.offsetLeft + 10 + "px";
+      arrowContainer.classList.remove("arrow-right-pressed");
       break;
     default:
       return;
@@ -51,6 +75,22 @@ const handleKeyUp = (event) => {
   checkWinner();
 };
 
+const fireKeyDown = (key) => {
+  console.log("fireKeydown_inside func");
+  const event = new KeyboardEvent('keydown', {key: key});
+  console.log("keydown event created: ", event);
+  console.log("****************************");
+  console.log(window.dispatchEvent(event)); 
+}
+
+const fireKeyUp = (key) => {
+  console.log("fireKeyUp_inside func");
+  const event = new KeyboardEvent('keyup', {key: key});
+  console.log("keydown event created: ", event);
+  console.log("****************************");
+  console.log(window.dispatchEvent(event)); 
+}
+
 socket.on("addPlayer", (players) => {
   console.log("*************************************");
   console.log("Received-Players-Front: ", players);
@@ -58,7 +98,7 @@ socket.on("addPlayer", (players) => {
 
   const lastAddedPlayer = players[players.length - 1];
 
-  if (!myID) {
+  if (!myID) {   //I'm the new added ball
     players.forEach((player) => {
       // create a new player element and append it to the body
       const newPlayer = document.createElement("div");
@@ -72,8 +112,6 @@ socket.on("addPlayer", (players) => {
       newPlayer.style.backgroundColor = player.color;
       document.body.appendChild(newPlayer);
     });
-
-    window.addEventListener("keyup", handleKeyUp);
 
     //update ID
     myID = lastAddedPlayer.playerId;
@@ -99,7 +137,7 @@ socket.on("addPlayer", (players) => {
     newPlayer.style.backgroundColor = lastAddedPlayer.color;
     document.body.appendChild(newPlayer);
   }
-});
+});                                                                         
 
 socket.on("removePlayer", (playerId) => {
   const player = document.getElementById(playerId);
@@ -123,10 +161,19 @@ socket.on("updatePosition", (data) => {
 socket.on("gameOver", () => {
   console.log("**Game Over**");
   Swal.fire({
-    icon: "success",
+    icon: "info",
     title: "Game Over!",
     text: "We Have a Winner",
     customClass: "confetti",
+    showConfirmButton: false,
   });
+
+  window.removeEventListener("keyup", handleKeyUp);
+  window.removeEventListener("keydown", handleKeyUp);
 });
- 
+
+//handleKeyUp
+window.addEventListener("keyup", handleKeyUp);
+
+//handleKeyDown
+document.addEventListener("keydown", handleKeyDown);

@@ -17,5 +17,6 @@ module.exports = {
     "console": true,
     "io": true,
     "Swal": true,
+    "KeyboardEvent": true,
   }
 };
