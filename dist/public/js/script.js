@@ -10,7 +10,18 @@ const getCurrentPlayer = () => {
 
 const checkWinner = () => {
   const currentPlayer = getCurrentPlayer();
-  if (currentPlayer.offsetLeft >= 1230) {
+  const endBar = document.querySelector('.end-bar');
+
+  if (!currentPlayer || !endBar) {
+    console.error('Player or end bar element not found');
+    return;
+  }
+
+  const playerRect = currentPlayer.getBoundingClientRect();
+  const endBarRect = endBar.getBoundingClientRect();
+
+  // Check if the player's right edge has passed the end bar's left edge
+  if (playerRect.right >= endBarRect.left) {
     socket.emit("haveWinner");
   }
 };
