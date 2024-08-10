@@ -9,7 +9,7 @@
     "rootDir": "./src",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
