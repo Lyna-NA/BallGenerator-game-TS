@@ -52,22 +52,22 @@ const handleKeyUp = (event) => {
 
   switch (event.key) {
     case "ArrowUp":
-      currentPlayer.style.top = currentPlayer.offsetTop - 10 + "px";
+      currentPlayer.style.top = currentPlayer.offsetTop - 30 + "px";
       arrowContainer.classList.remove("arrow-up-pressed");
       break;
 
     case "ArrowDown":
-      currentPlayer.style.top = currentPlayer.offsetTop + 10 + "px";
+      currentPlayer.style.top = currentPlayer.offsetTop + 30 + "px";
       arrowContainer.classList.remove("arrow-down-pressed");
       break;
 
     case "ArrowLeft":
-      currentPlayer.style.left = currentPlayer.offsetLeft - 10 + "px";
+      currentPlayer.style.left = currentPlayer.offsetLeft - 30 + "px";
       arrowContainer.classList.remove("arrow-left-pressed");
       break;
 
     case "ArrowRight":
-      currentPlayer.style.left = currentPlayer.offsetLeft + 10 + "px";
+      currentPlayer.style.left = currentPlayer.offsetLeft + 30 + "px";
       arrowContainer.classList.remove("arrow-right-pressed");
       break;
     default:
